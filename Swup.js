@@ -73,7 +73,7 @@ class Swup {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            await this.handleErrorResponse(response);
         }
 
         return response.json();
@@ -89,7 +89,7 @@ class Swup {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            await this.handleErrorResponse(response);
         }
 
         return response.json();
@@ -114,6 +114,12 @@ class Swup {
         const hmac = crypto.createHmac('sha256', this.privateKey);
 
         return hmac.update(Buffer.from(str, 'utf-8')).digest('hex');
+    }
+
+    async handleErrorResponse(response) {
+        const responseText = await response.text();
+
+        throw new Error(`HTTP error! status: ${response.status}, response: ${responseText}`);
     }
 }
 
